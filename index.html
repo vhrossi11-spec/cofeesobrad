@@ -21,17 +21,17 @@
             margin: 0;
         }
         .clone-label {
-            background: rgba(255, 255, 255, 0.92);
-            border: 1px solid #000;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #333;
             border-radius: 3px;
-            padding: 1px 6px;
-            font-size: 11px;
+            padding: 0px 4px;
+            font-size: 10px;
             font-weight: bold;
             text-align: center;
             white-space: nowrap;
             color: #000;
             font-family: Arial, sans-serif;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.3);
             pointer-events: none;
         }
         .label-clone-wrapper {
@@ -260,7 +260,7 @@
         setBounds();
 
         // ==============================================
-        // RÓTULOS DINÂMICOS DOS CLONES AO LONGO DAS LINHAS
+        // RÓTULOS DINÂMICOS DOS CLONES - VERSÃO LIMPA
         // ==============================================
         var decoradoresClones = [];
 
@@ -273,11 +273,11 @@
             var zoom = map.getZoom();
             var espacamentoPx;
 
-            if (zoom >= 21) espacamentoPx = 60;
-            else if (zoom >= 19) espacamentoPx = 120;
-            else if (zoom >= 17) espacamentoPx = 200;
-            else if (zoom >= 15) espacamentoPx = 350;
-            else return;
+            // Espaçamentos maiores pra ficar mais limpo
+            if (zoom >= 20) espacamentoPx = 250;
+            else if (zoom >= 18) espacamentoPx = 400;
+            else if (zoom >= 16) espacamentoPx = 600;
+            else return; // zoom afastado: sem rótulos
 
             layer_Mesclado_0.eachLayer(function(linha) {
                 var clone = linha.feature.properties.Clone || '';
@@ -286,7 +286,7 @@
                 var decorator = L.polylineDecorator(linha, {
                     patterns: [
                         {
-                            offset: 30,
+                            offset: 50,
                             repeat: espacamentoPx,
                             symbol: L.Symbol.marker({
                                 rotate: false,
@@ -294,8 +294,8 @@
                                     icon: L.divIcon({
                                         className: 'label-clone-wrapper',
                                         html: '<div class="clone-label">' + clone + '</div>',
-                                        iconSize: [40, 16],
-                                        iconAnchor: [20, 8]
+                                        iconSize: [36, 14],
+                                        iconAnchor: [18, 7]
                                     }),
                                     interactive: false
                                 }
