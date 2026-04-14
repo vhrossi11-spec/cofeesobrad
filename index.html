@@ -40,7 +40,7 @@
         <script src="js/leaflet.photon.js"></script>
         <script src="js/leaflet-measure.js"></script>
         <script src="data/Mesclado_0.js"></script>
-        <script src="data/pontos_cafe_2.js"></script>
+        <script src="data/pontos_leve_2.js"></script>
         <script>
         var map = L.map('map', {
             zoomControl:false, maxZoom:28, minZoom:1
@@ -193,7 +193,7 @@
                                               {pane: 'pane_ortoleve_1'});
         bounds_group.addLayer(layer_ortoleve_1);
         map.addLayer(layer_ortoleve_1);
-        function pop_pontos_cafe_2(feature, layer) {
+        function pop_pontos_leve_2(feature, layer) {
             var popupContent = '<table>\
                     <tr>\
                         <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(String(feature.properties['fid']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
@@ -205,10 +205,12 @@
                         <td colspan="2">' + (feature.properties['Linha'] !== null ? autolinker.link(String(feature.properties['Linha']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['Clone'] !== null ? autolinker.link(String(feature.properties['Clone']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                        <th scope="row">Clone</th>\
+                        <td>' + (feature.properties['Clone'] !== null ? autolinker.link(String(feature.properties['Clone']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['LADO'] !== null ? autolinker.link(String(feature.properties['LADO']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                        <th scope="row">LADO</th>\
+                        <td>' + (feature.properties['LADO'] !== null ? autolinker.link(String(feature.properties['LADO']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
                         <td colspan="2">' + (feature.properties['layer'] !== null ? autolinker.link(String(feature.properties['layer']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
@@ -222,6 +224,13 @@
                     <tr>\
                         <td colspan="2">' + (feature.properties['angle'] !== null ? autolinker.link(String(feature.properties['angle']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
+                    <tr>\
+                        <th scope="row">amostra</th>\
+                        <td>' + (feature.properties['amostra'] !== null ? autolinker.link(String(feature.properties['amostra']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['amostra1'] !== null ? autolinker.link(String(feature.properties['amostra1']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
 			layer.on('popupopen', function(e) {
@@ -230,11 +239,11 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_pontos_cafe_2_0(feature) {
+        function style_pontos_leve_2_0(feature) {
             switch(String(feature.properties['Clone'])) {
                 case '156':
                     return {
-                pane: 'pane_pontos_cafe_2',
+                pane: 'pane_pontos_leve_2',
                 radius: 4.0,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -250,7 +259,7 @@
                     break;
                 case 'A1':
                     return {
-                pane: 'pane_pontos_cafe_2',
+                pane: 'pane_pontos_leve_2',
                 radius: 4.0,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -266,7 +275,7 @@
                     break;
                 case 'AS2':
                     return {
-                pane: 'pane_pontos_cafe_2',
+                pane: 'pane_pontos_leve_2',
                 radius: 4.0,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -282,7 +291,7 @@
                     break;
                 case 'R10':
                     return {
-                pane: 'pane_pontos_cafe_2',
+                pane: 'pane_pontos_leve_2',
                 radius: 4.0,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -298,7 +307,7 @@
                     break;
                 case 'R22':
                     return {
-                pane: 'pane_pontos_cafe_2',
+                pane: 'pane_pontos_leve_2',
                 radius: 4.0,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -314,7 +323,7 @@
                     break;
                 case 'R4':
                     return {
-                pane: 'pane_pontos_cafe_2',
+                pane: 'pane_pontos_leve_2',
                 radius: 4.0,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -330,7 +339,7 @@
                     break;
                 default:
                     return {
-                pane: 'pane_pontos_cafe_2',
+                pane: 'pane_pontos_leve_2',
                 radius: 4.0,
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
@@ -346,26 +355,26 @@
                     break;
             }
         }
-        map.createPane('pane_pontos_cafe_2');
-        map.getPane('pane_pontos_cafe_2').style.zIndex = 402;
-        map.getPane('pane_pontos_cafe_2').style['mix-blend-mode'] = 'normal';
-        var layer_pontos_cafe_2 = new L.geoJson(json_pontos_cafe_2, {
+        map.createPane('pane_pontos_leve_2');
+        map.getPane('pane_pontos_leve_2').style.zIndex = 402;
+        map.getPane('pane_pontos_leve_2').style['mix-blend-mode'] = 'normal';
+        var layer_pontos_leve_2 = new L.geoJson(json_pontos_leve_2, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_pontos_cafe_2',
-            layerName: 'layer_pontos_cafe_2',
-            pane: 'pane_pontos_cafe_2',
-            onEachFeature: pop_pontos_cafe_2,
+            dataVar: 'json_pontos_leve_2',
+            layerName: 'layer_pontos_leve_2',
+            pane: 'pane_pontos_leve_2',
+            onEachFeature: pop_pontos_leve_2,
             pointToLayer: function (feature, latlng) {
                 var context = {
                     feature: feature,
                     variables: {}
                 };
-                return L.circleMarker(latlng, style_pontos_cafe_2_0(feature));
+                return L.circleMarker(latlng, style_pontos_leve_2_0(feature));
             },
         });
-        bounds_group.addLayer(layer_pontos_cafe_2);
-        map.addLayer(layer_pontos_cafe_2);
+        bounds_group.addLayer(layer_pontos_leve_2);
+        map.addLayer(layer_pontos_leve_2);
         setBounds();
         var i = 0;
         layer_Mesclado_0.eachLayer(function(layer) {
