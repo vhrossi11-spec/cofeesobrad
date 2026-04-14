@@ -20,6 +20,24 @@
             padding: 0;
             margin: 0;
         }
+        .clone-label {
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid #000;
+            border-radius: 3px;
+            padding: 1px 6px;
+            font-size: 11px;
+            font-weight: bold;
+            text-align: center;
+            white-space: nowrap;
+            color: #000;
+            font-family: Arial, sans-serif;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+            pointer-events: none;
+        }
+        .label-clone-wrapper {
+            background: transparent !important;
+            border: none !important;
+        }
         </style>
         <title></title>
     </head>
@@ -39,6 +57,7 @@
         <script src="js/labels.js"></script>
         <script src="js/leaflet.photon.js"></script>
         <script src="js/leaflet-measure.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/leaflet-polylinedecorator@1.6.0/dist/leaflet.polylineDecorator.min.js"></script>
         <script src="data/Mesclado_0.js"></script>
         <script src="data/pontos_leve_2.js"></script>
         <script>
@@ -48,7 +67,6 @@
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
-        // remove popup's row if "visible-with-data"
         function removeEmptyRowsFromPopupContent(content, feature) {
          var tempDiv = document.createElement('div');
          tempDiv.innerHTML = content;
@@ -62,7 +80,6 @@
          }
          return tempDiv.innerHTML;
         }
-        // modify popup if contains media
         function addClassToPopupIfMedia(content, popup) {
             var tempDiv = document.createElement('div');
             tempDiv.innerHTML = content;
@@ -94,7 +111,6 @@
                     video.style.maxWidth = "60vw";
                     imgTd.parentNode.replaceChild(video, imgTd);
                     popup._contentNode.classList.add('media');
-                    // Aggiorna il popup quando il video carica i metadati
                     video.addEventListener('loadedmetadata', function() {
                         popup.update();
                     });
@@ -131,24 +147,12 @@
         }
         function pop_Mesclado_0(feature, layer) {
             var popupContent = '<table>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(String(feature.properties['id']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['Linha'] !== null ? autolinker.link(String(feature.properties['Linha']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['Clone'] !== null ? autolinker.link(String(feature.properties['Clone']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['LADO'] !== null ? autolinker.link(String(feature.properties['LADO']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['layer'] !== null ? autolinker.link(String(feature.properties['layer']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['path'] !== null ? autolinker.link(String(feature.properties['path']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
+                    <tr><td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(String(feature.properties['id']).replace(/'/g, '\'').toLocaleString()) : '') + '</td></tr>\
+                    <tr><td colspan="2">' + (feature.properties['Linha'] !== null ? autolinker.link(String(feature.properties['Linha']).replace(/'/g, '\'').toLocaleString()) : '') + '</td></tr>\
+                    <tr><td colspan="2">' + (feature.properties['Clone'] !== null ? autolinker.link(String(feature.properties['Clone']).replace(/'/g, '\'').toLocaleString()) : '') + '</td></tr>\
+                    <tr><td colspan="2">' + (feature.properties['LADO'] !== null ? autolinker.link(String(feature.properties['LADO']).replace(/'/g, '\'').toLocaleString()) : '') + '</td></tr>\
+                    <tr><td colspan="2">' + (feature.properties['layer'] !== null ? autolinker.link(String(feature.properties['layer']).replace(/'/g, '\'').toLocaleString()) : '') + '</td></tr>\
+                    <tr><td colspan="2">' + (feature.properties['path'] !== null ? autolinker.link(String(feature.properties['path']).replace(/'/g, '\'').toLocaleString()) : '') + '</td></tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
 			layer.on('popupopen', function(e) {
@@ -195,42 +199,11 @@
         map.addLayer(layer_ortoleve_1);
         function pop_pontos_leve_2(feature, layer) {
             var popupContent = '<table>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(String(feature.properties['fid']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(String(feature.properties['id']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['Linha'] !== null ? autolinker.link(String(feature.properties['Linha']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">Clone</th>\
-                        <td>' + (feature.properties['Clone'] !== null ? autolinker.link(String(feature.properties['Clone']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">LADO</th>\
-                        <td>' + (feature.properties['LADO'] !== null ? autolinker.link(String(feature.properties['LADO']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['layer'] !== null ? autolinker.link(String(feature.properties['layer']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['path'] !== null ? autolinker.link(String(feature.properties['path']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['distance'] !== null ? autolinker.link(String(feature.properties['distance']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['angle'] !== null ? autolinker.link(String(feature.properties['angle']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">amostra</th>\
-                        <td>' + (feature.properties['amostra'] !== null ? autolinker.link(String(feature.properties['amostra']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['amostra1'] !== null ? autolinker.link(String(feature.properties['amostra1']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
+                    <tr><td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(String(feature.properties['fid']).replace(/'/g, '\'').toLocaleString()) : '') + '</td></tr>\
+                    <tr><td colspan="2">' + (feature.properties['id'] !== null ? autolinker.link(String(feature.properties['id']).replace(/'/g, '\'').toLocaleString()) : '') + '</td></tr>\
+                    <tr><td colspan="2">' + (feature.properties['Linha'] !== null ? autolinker.link(String(feature.properties['Linha']).replace(/'/g, '\'').toLocaleString()) : '') + '</td></tr>\
+                    <tr><td colspan="2">' + (feature.properties['Clone'] !== null ? autolinker.link(String(feature.properties['Clone']).replace(/'/g, '\'').toLocaleString()) : '') + '</td></tr>\
+                    <tr><td colspan="2">' + (feature.properties['LADO'] !== null ? autolinker.link(String(feature.properties['LADO']).replace(/'/g, '\'').toLocaleString()) : '') + '</td></tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
 			layer.on('popupopen', function(e) {
@@ -242,116 +215,25 @@
         function style_pontos_leve_2_0(feature) {
             switch(String(feature.properties['Clone'])) {
                 case '156':
-                    return {
-                pane: 'pane_pontos_leve_2',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(74,213,61,1.0)',
-                interactive: true,
-            }
+                    return {pane: 'pane_pontos_leve_2', radius: 4.0, opacity: 1, color: 'rgba(35,35,35,1.0)', dashArray: '', lineCap: 'butt', lineJoin: 'miter', weight: 1, fill: true, fillOpacity: 1, fillColor: 'rgba(74,213,61,1.0)', interactive: true}
                     break;
                 case 'A1':
-                    return {
-                pane: 'pane_pontos_leve_2',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(159,88,229,1.0)',
-                interactive: true,
-            }
+                    return {pane: 'pane_pontos_leve_2', radius: 4.0, opacity: 1, color: 'rgba(35,35,35,1.0)', dashArray: '', lineCap: 'butt', lineJoin: 'miter', weight: 1, fill: true, fillOpacity: 1, fillColor: 'rgba(159,88,229,1.0)', interactive: true}
                     break;
                 case 'AS2':
-                    return {
-                pane: 'pane_pontos_leve_2',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(229,240,73,1.0)',
-                interactive: true,
-            }
+                    return {pane: 'pane_pontos_leve_2', radius: 4.0, opacity: 1, color: 'rgba(35,35,35,1.0)', dashArray: '', lineCap: 'butt', lineJoin: 'miter', weight: 1, fill: true, fillOpacity: 1, fillColor: 'rgba(229,240,73,1.0)', interactive: true}
                     break;
                 case 'R10':
-                    return {
-                pane: 'pane_pontos_leve_2',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(233,134,110,1.0)',
-                interactive: true,
-            }
+                    return {pane: 'pane_pontos_leve_2', radius: 4.0, opacity: 1, color: 'rgba(35,35,35,1.0)', dashArray: '', lineCap: 'butt', lineJoin: 'miter', weight: 1, fill: true, fillOpacity: 1, fillColor: 'rgba(233,134,110,1.0)', interactive: true}
                     break;
                 case 'R22':
-                    return {
-                pane: 'pane_pontos_leve_2',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(82,142,240,1.0)',
-                interactive: true,
-            }
+                    return {pane: 'pane_pontos_leve_2', radius: 4.0, opacity: 1, color: 'rgba(35,35,35,1.0)', dashArray: '', lineCap: 'butt', lineJoin: 'miter', weight: 1, fill: true, fillOpacity: 1, fillColor: 'rgba(82,142,240,1.0)', interactive: true}
                     break;
                 case 'R4':
-                    return {
-                pane: 'pane_pontos_leve_2',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(229,20,156,1.0)',
-                interactive: true,
-            }
+                    return {pane: 'pane_pontos_leve_2', radius: 4.0, opacity: 1, color: 'rgba(35,35,35,1.0)', dashArray: '', lineCap: 'butt', lineJoin: 'miter', weight: 1, fill: true, fillOpacity: 1, fillColor: 'rgba(229,20,156,1.0)', interactive: true}
                     break;
                 default:
-                    return {
-                pane: 'pane_pontos_leve_2',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(117,234,207,1.0)',
-                interactive: true,
-            }
+                    return {pane: 'pane_pontos_leve_2', radius: 4.0, opacity: 1, color: 'rgba(35,35,35,1.0)', dashArray: '', lineCap: 'butt', lineJoin: 'miter', weight: 1, fill: true, fillOpacity: 1, fillColor: 'rgba(117,234,207,1.0)', interactive: true}
                     break;
             }
         }
@@ -376,33 +258,64 @@
         bounds_group.addLayer(layer_pontos_leve_2);
         map.addLayer(layer_pontos_leve_2);
         setBounds();
-        var i = 0;
-        layer_Mesclado_0.eachLayer(function(layer) {
-            var context = {
-                feature: layer.feature,
-                variables: {}
-            };
-            layer.bindTooltip((layer.feature.properties['Clone'] !== null?String('<div style="color: #fbfbfb; font-size: 10pt; font-family: \'Microsoft YaHei UI\', sans-serif;">' + layer.feature.properties['Clone']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Mesclado_0'});
-            labels.push(layer);
-            totalMarkers += 1;
-              layer.added = true;
-              addLabel(layer, i);
-              i++;
-        });
+
+        // ==============================================
+        // RÓTULOS DINÂMICOS DOS CLONES AO LONGO DAS LINHAS
+        // ==============================================
+        var decoradoresClones = [];
+
+        function atualizarRotulosClones() {
+            decoradoresClones.forEach(function(d) {
+                map.removeLayer(d);
+            });
+            decoradoresClones = [];
+
+            var zoom = map.getZoom();
+            var espacamentoPx;
+
+            if (zoom >= 21) espacamentoPx = 60;
+            else if (zoom >= 19) espacamentoPx = 120;
+            else if (zoom >= 17) espacamentoPx = 200;
+            else if (zoom >= 15) espacamentoPx = 350;
+            else return;
+
+            layer_Mesclado_0.eachLayer(function(linha) {
+                var clone = linha.feature.properties.Clone || '';
+                if (!clone) return;
+
+                var decorator = L.polylineDecorator(linha, {
+                    patterns: [
+                        {
+                            offset: 30,
+                            repeat: espacamentoPx,
+                            symbol: L.Symbol.marker({
+                                rotate: false,
+                                markerOptions: {
+                                    icon: L.divIcon({
+                                        className: 'label-clone-wrapper',
+                                        html: '<div class="clone-label">' + clone + '</div>',
+                                        iconSize: [40, 16],
+                                        iconAnchor: [20, 8]
+                                    }),
+                                    interactive: false
+                                }
+                            })
+                        }
+                    ]
+                });
+
+                decorator.addTo(map);
+                decoradoresClones.push(decorator);
+            });
+        }
+
+        map.on('zoomend moveend', atualizarRotulosClones);
+        setTimeout(atualizarRotulosClones, 500);
+
         L.ImageOverlay.include({
             getBounds: function () {
                 return this._bounds;
             }
-        });
-        resetLabels([layer_Mesclado_0]);
-        map.on("zoomend", function(){
-            resetLabels([layer_Mesclado_0]);
-        });
-        map.on("layeradd", function(){
-            resetLabels([layer_Mesclado_0]);
-        });
-        map.on("layerremove", function(){
-            resetLabels([layer_Mesclado_0]);
         });
         </script>        
     </body>
