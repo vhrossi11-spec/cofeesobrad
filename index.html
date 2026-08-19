@@ -319,4 +319,18 @@
         });
         </script>        
     </body>
+	<!-- Biblioteca Turf local (Offline) -->
+<script src="js/turf.min.js"></script>
+
+<!-- Script do Cerco GPS -->
+<script src="js/cerco-colheita.js"></script>
+
+<!-- Ativador do Cache Offline -->
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./service-worker.js')
+      .then(() => console.log('Mapa pronto para uso offline!'))
+      .catch((err) => console.log('Erro ao ativar offline:', err));
+  }
+</script>
 </html>
