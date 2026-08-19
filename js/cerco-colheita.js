@@ -22,7 +22,6 @@ let linhasDestacadas = [];
 
 function toggleCerco() {
   if (!gravando) {
-    // Iniciar gravação do perímetro
     gravando = true;
     pontosPerimetro = [];
     document.getElementById('btn-cerco').innerText = '⏹️ Fechar Cerco e Calcular';
@@ -43,9 +42,8 @@ function toggleCerco() {
       );
     }
   } else {
-    // Finalizar e calcular
     gravando = false;
-    navigator.geolocation.clearWatch(watchID);
+    if (watchID) navigator.geolocation.clearWatch(watchID);
     document.getElementById('btn-cerco').innerText = '🔴 Novo Cerco';
     document.getElementById('btn-cerco').style.background = '#27ae60';
     document.getElementById('btn-limpar').style.display = 'block';
@@ -69,39 +67,80 @@ function atualizarPoligono() {
   }).addTo(map);
 }
 
+function cruzouSegmento(p1, p2, p3, p4) {
+  function ccw(A, B, C) {
+    return (C[1] - A[1]) * (B[0] - A[0]) > (B[1] - A[1]) * (C[0] - A[0]);
+  }
+  return (ccw(p1, p3, p4) !== ccw(p2, p3, p4)) && (ccw(p1, p2, p3) !== ccw(p1, p2, p4));
+}
+
+function pontoEmPoligono(pt, poly) {
+  let x = pt[0], y = pt[1], dentro = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    let xi = poly[i][0], yi = poly[i][1];
+    let xj = poly[j][0], yj = poly[j][1];
+    let intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+    if (intersect) dentro = !dentro;
+  }
+  return dentro;
+}
+
+function linhaInterseccionaPoligono(coords, poly) {
+  for (let pt of coords) {
+    if (pontoEmPoligono(pt, poly)) return true;
+  }
+  for (let k = 0; k < coords.length - 1; k++) {
+    let p1 = coords[k], p2 = coords[k+1];
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      let p3 = poly[j], p4 = poly[i];
+      if (cruzouSegmento(p1, p2, p3, p4)) return true;
+    }
+  }
+  return false;
+}
+
+function calcularMetros(feature) {
+  let coordsList = feature.geometry.type === 'LineString' ? [feature.geometry.coordinates] : feature.geometry.coordinates;
+  let m = 0, R = 6371000;
+  coordsList.forEach(line => {
+    for (let i = 0; i < line.length - 1; i++) {
+      let p1 = line[i], p2 = line[i+1];
+      let lat1 = p1[1] * Math.PI / 180, lat2 = p2[1] * Math.PI / 180;
+      let dLat = (p2[1] - p1[1]) * Math.PI / 180;
+      let dLng = (p2[0] - p1[0]) * Math.PI / 180;
+      let a = Math.sin(dLat/2)**2 + Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLng/2)**2;
+      m += R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    }
+  });
+  return m;
+}
+
 function calcularLinhasNoCerco() {
   if (pontosPerimetro.length < 3 || typeof json_Mesclado_0 === 'undefined') {
     alert('Pontos insuficientes para fechar o cerco ou camadas do mapa não carregadas.');
     return;
   }
 
-  const coordsGeoJSON = pontosPerimetro.map(p => [p[1], p[0]]);
-  coordsGeoJSON.push([pontosPerimetro[0][1], pontosPerimetro[0][0]]); // Fechar anel
-  const poligonoTurf = turf.polygon([coordsGeoJSON]);
+  const polyGeoJSON = pontosPerimetro.map(p => [p[1], p[0]]);
+  polyGeoJSON.push([polyGeoJSON[0][0], polyGeoJSON[0][1]]);
   
   let totalLinhas = 0;
   let totalPes = 0;
 
-  // Limpar destaques anteriores
   linhasDestacadas.forEach(l => map.removeLayer(l));
   linhasDestacadas = [];
 
   json_Mesclado_0.features.forEach(feature => {
     try {
-      const linhaTurf = turf.lineString(feature.geometry.coordinates);
-      // Verifica se a linha cruza ou está dentro do cerco
-      const dentro = turf.booleanIntersects(linhaTurf, poligonoTurf);
-      
-      if (dentro) {
-        totalLinhas++;
-        
-        // Comprimento em metros * 2 fileiras / 0.8m
-        const lenMeters = turf.length(linhaTurf, { units: 'meters' });
-        const pesLinha = Math.round((lenMeters / 0.8) * 2);
-        totalPes += pesLinha;
+      let lines = feature.geometry.type === 'LineString' ? [feature.geometry.coordinates] : feature.geometry.coordinates;
+      let cruzou = lines.some(lineCoords => linhaInterseccionaPoligono(lineCoords, polyGeoJSON));
 
-        // Destacar linha colhida no mapa com cor verde
-        const camadaVerde = L.geoJSON(feature, {
+      if (cruzou) {
+        totalLinhas++;
+        let lenMeters = calcularMetros(feature);
+        totalPes += Math.round((lenMeters / 0.8) * 2);
+
+        let camadaVerde = L.geoJSON(feature, {
           style: { color: '#27ae60', weight: 6, opacity: 0.8 }
         }).addTo(map);
         linhasDestacadas.push(camadaVerde);
@@ -110,7 +149,7 @@ function calcularLinhasNoCerco() {
   });
 
   document.getElementById('resultado-colheita').style.display = 'block';
-  document.getElementById('res-linhas').innerText = Math.round(totalLinhas / 2); // 2 traçados = 1 linha física
+  document.getElementById('res-linhas').innerText = Math.round(totalLinhas / 2);
   document.getElementById('res-pes').innerText = Math.round(totalPes / 2).toLocaleString('pt-BR');
 }
 
